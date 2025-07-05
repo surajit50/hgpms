@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import {
-  getWarishDetailsById,
-  updateWarishDetails,
-} from "@/action/warishApplicationActions";
+// import {
+//   getWarishDetailsById,
+//   updateWarishDetails,
+// } from "@/action/warishApplicationActions";
 import {
   warishFormSchemas,
   WarishFormValuesTypes,
@@ -48,66 +48,66 @@ export default function WarishEditFormComponent({
     },
   });
 
-  // Fetch Warish Details by ID
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getWarishDetailsById(applicationId);
-        if (data) {
-          form.reset({
-            ...data,
-            reportingDate: data.reportingDate
-              ? new Date(data.reportingDate)
-              : new Date(),
-            dateOfDeath: data.dateOfDeath
-              ? new Date(data.dateOfDeath)
-              : new Date(),
-            spouseName: data.spouseName ?? undefined, // Handling null spouse name
-          });
-        }
-      } catch (error) {
-        console.error("Failed to fetch Warish details:", error);
-        toast({
-          title: "Error / ত্রুটি",
-          description: "Failed to load Warish details",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // // Fetch Warish Details by ID
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const data = await getWarishDetailsById(applicationId);
+  //       if (data) {
+  //         form.reset({
+  //           ...data,
+  //           reportingDate: data.reportingDate
+  //             ? new Date(data.reportingDate)
+  //             : new Date(),
+  //           dateOfDeath: data.dateOfDeath
+  //             ? new Date(data.dateOfDeath)
+  //             : new Date(),
+  //           spouseName: data.spouseName ?? undefined, // Handling null spouse name
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to fetch Warish details:", error);
+  //       toast({
+  //         title: "Error / ত্রুটি",
+  //         description: "Failed to load Warish details",
+  //         variant: "destructive",
+  //       });
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchData();
-  }, [applicationId]);
+  //   fetchData();
+  // }, [applicationId]);
 
   // Handle form submission
   const onSubmit = async (data: WarishFormValuesTypes) => {
     setIsSubmitting(true);
-    try {
-      const result = await updateWarishDetails(applicationId, data);
-      if (!result?.success) {
-        toast({
-          title: "Error / ত্রুটি",
-          description: result?.message || "Failed to update Warish details",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success / সফল",
-          description: "Warish details updated successfully",
-        });
-        router.push("/admindashboard/home"); // Redirect after successful update
-      }
-    } catch (error) {
-      console.error("Failed to update Warish details:", error);
-      toast({
-        title: "Error / ত্রুটি",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    // try {
+    //   const result = await updateWarishDetails(applicationId, data);
+    //   if (!result?.success) {
+    //     toast({
+    //       title: "Error / ত্রুটি",
+    //       description: result?.message || "Failed to update Warish details",
+    //       variant: "destructive",
+    //     });
+    //   } else {
+    //     toast({
+    //       title: "Success / সফল",
+    //       description: "Warish details updated successfully",
+    //     });
+    //     router.push("/admindashboard/home"); // Redirect after successful update
+    //   }
+    // } catch (error) {
+    //   console.error("Failed to update Warish details:", error);
+    //   toast({
+    //     title: "Error / ত্রুটি",
+    //     description: "An unexpected error occurred. Please try again.",
+    //     variant: "destructive",
+    //   });
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
   };
 
   if (isLoading) {
