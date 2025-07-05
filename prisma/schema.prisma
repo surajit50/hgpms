@@ -1,0 +1,653 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String
+  password  String
+  phone     String?
+  role      UserRole @default(GP_STAFF)
+  status    UserStatus @default(ACTIVE)
+  gpId      String?  @db.ObjectId
+  stripeId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  gramPanchayat GramPanchayat? @relation("UserGP", fields: [gpId], references: [id])
+  managedUsers  User[]         @relation("UserManagement")
+  managedBy     User?          @relation("UserManagement", fields: [managedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  managedById   String?        @db.ObjectId
+  
+  // Certificate Management Relations
+  certificatesCreated Certificate[] @relation("CertificateCreatedBy")
+  certificatesUpdated Certificate[] @relation("CertificateUpdatedBy")
+  certificatesAssigned Certificate[] @relation("CertificateAssignedTo")
+  certificatesVerified Certificate[] @relation("CertificateVerifiedBy")
+  certificatesApproved Certificate[] @relation("CertificateApprovedBy")
+  certificatesRejected Certificate[] @relation("CertificateRejectedBy")
+  certificateDocumentsVerified CertificateDocument[] @relation("DocumentVerifiedBy")
+  certificateTemplatesCreated CertificateTemplate[] @relation("TemplateCreatedBy")
+  certificateWorkflowsCreated CertificateWorkflow[] @relation("WorkflowCreatedBy")
+  
+  // Other Relations
+  schemes       Scheme[]
+  waterReports  WaterReport[]
+  assets        Asset[]
+  documents     Document[]
+  warishApplications WarishApplication[]
+  warishApplicationsCreated WarishApplication[] @relation("WarishCreatedBy")
+  warishApplicationsUpdated WarishApplication[] @relation("WarishUpdatedBy")
+  
+  createdBy     String?        @db.ObjectId
+  updatedBy     String?        @db.ObjectId
+}
+
+model GramPanchayat {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  district    String
+  state       String
+  contact     String?
+  adminName   String?
+  adminEmail  String?
+  adminPhone  String?
+  address     String?
+  population  Int?
+  wards       Int?
+  status      GramPanchayatStatus @default(ACTIVE)
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users         User[]         @relation("UserGP")
+  certificates  Certificate[]
+  schemes       Scheme[]
+  waterReports  WaterReport[]
+  assets        Asset[]
+  documents     Document[]
+  beneficiaries Beneficiary[]
+  warishApplications WarishApplication[]
+  certificateTemplates CertificateTemplate[]
+  certificateWorkflows CertificateWorkflow[]
+  subscription  Subscription?
+}
+
+model Subscription {
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  gpId             String             @unique @db.ObjectId
+  plan             Plan               @relation(fields: [planId], references: [id])
+  planId           String             @db.ObjectId
+  stripeSubId      String?            @unique
+  status           SubscriptionStatus @default(ACTIVE)
+  currentPeriodEnd DateTime
+  createdAt        DateTime           @default(now())
+
+  gramPanchayat GramPanchayat @relation(fields: [gpId], references: [id])
+}
+
+model Plan {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String    @unique
+  price         Float
+  duration      Int // in months
+  features      Feature[]
+  stripePriceId String    @unique
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  subscriptions Subscription[]
+}
+
+model Certificate {
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  type              CertificateType
+  certificateNumber String            @unique
+  status            CertificateStatus @default(PENDING)
+  
+  // Applicant Information
+  applicantName     String
+  applicantEmail    String
+  applicantPhone    String
+  applicantAddress  String
+  applicantAadhar   String?
+  applicantPan      String?
+  
+  // Event Information
+  dateOfEvent       DateTime
+  placeOfEvent      String
+  eventDetails      Json?             // Flexible field for type-specific data
+  
+  // Family Information
+  fatherName        String?
+  motherName        String?
+  spouseName        String?
+  guardianName      String?
+  guardianRelation  String?
+  
+  // Certificate Details
+  issueDate         DateTime?
+  expiryDate        DateTime?
+  validityPeriod    Int?              // in months
+  certificateFormat CertificateFormat @default(DIGITAL)
+  isDuplicate       Boolean           @default(false)
+  originalCertificateId String?       @db.ObjectId
+  
+  // Processing Information
+  applicationDate   DateTime          @default(now())
+  processingFee     Float?
+  paymentStatus     PaymentStatus     @default(PENDING)
+  assignedTo        String?           @db.ObjectId
+  priority          CertificatePriority @default(NORMAL)
+  
+  // Verification & Approval
+  verifiedBy        String?           @db.ObjectId
+  verifiedAt        DateTime?
+  approvedBy        String?           @db.ObjectId
+  approvedAt        DateTime?
+  rejectedBy        String?           @db.ObjectId
+  rejectedAt        DateTime?
+  rejectionReason   String?
+  
+  // Documents & Remarks
+  documents         CertificateDocument[]
+  remarks           String?
+  internalNotes     String?
+  
+  // GP & User Relations
+  gpId              String            @db.ObjectId
+  createdBy         String            @db.ObjectId
+  updatedBy         String?           @db.ObjectId
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  gramPanchayat     GramPanchayat    @relation(fields: [gpId], references: [id])
+  createdByUser     User              @relation("CertificateCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser     User?             @relation("CertificateUpdatedBy", fields: [updatedBy], references: [id])
+  assignedToUser    User?             @relation("CertificateAssignedTo", fields: [assignedTo], references: [id])
+  verifiedByUser    User?             @relation("CertificateVerifiedBy", fields: [verifiedBy], references: [id])
+  approvedByUser    User?             @relation("CertificateApprovedBy", fields: [approvedBy], references: [id])
+  rejectedByUser    User?             @relation("CertificateRejectedBy", fields: [rejectedBy], references: [id])
+  originalCertificate Certificate?    @relation("CertificateDuplicates", fields: [originalCertificateId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  duplicateCertificates Certificate[] @relation("CertificateDuplicates")
+  
+  // Indexes for better performance
+  @@index([type, status])
+  @@index([gpId, status])
+  @@index([assignedTo])
+  @@index([createdAt])
+}
+
+model CertificateDocument {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String?
+  fileUrl       String
+  fileType      String
+  fileSize      Int
+  documentType  CertificateDocumentType
+  isVerified    Boolean     @default(false)
+  verifiedBy    String?     @db.ObjectId
+  verifiedAt    DateTime?
+  
+  // Certificate relation
+  certificate   Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  certificateId String      @db.ObjectId
+  
+  // User relations
+  verifiedByUser User?      @relation("DocumentVerifiedBy", fields: [verifiedBy], references: [id])
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  @@index([certificateId])
+  @@index([documentType])
+}
+
+model CertificateTemplate {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  type            CertificateType
+  description     String?
+  templateData    Json              // Template structure and styling
+  isActive        Boolean           @default(true)
+  isDefault       Boolean           @default(false)
+  
+  // GP-specific template
+  gpId            String?           @db.ObjectId
+  createdBy       String            @db.ObjectId
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  // Relations
+  gramPanchayat   GramPanchayat?   @relation(fields: [gpId], references: [id])
+  createdByUser   User              @relation("TemplateCreatedBy", fields: [createdBy], references: [id])
+  
+  @@index([type, isActive])
+  @@index([gpId])
+}
+
+model CertificateWorkflow {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  type            CertificateType
+  steps           Json              // Workflow steps configuration
+  isActive        Boolean           @default(true)
+  isDefault       Boolean           @default(false)
+  
+  // GP-specific workflow
+  gpId            String?           @db.ObjectId
+  createdBy       String            @db.ObjectId
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  // Relations
+  gramPanchayat   GramPanchayat?   @relation(fields: [gpId], references: [id])
+  createdByUser   User              @relation("WorkflowCreatedBy", fields: [createdBy], references: [id])
+  
+  @@index([type, isActive])
+  @@index([gpId])
+}
+
+model Scheme {
+  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  description        String
+  type               SchemeType
+  amount             Float
+  unit               String
+  startDate          DateTime
+  endDate            DateTime?
+  eligibilityCriteria String
+  documentsRequired  String[]
+  status             SchemeStatus @default(ACTIVE)
+  gpId               String       @db.ObjectId
+  createdBy          String       @db.ObjectId
+  updatedBy          String?      @db.ObjectId
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  gramPanchayat GramPanchayat @relation(fields: [gpId], references: [id])
+  user          User          @relation(fields: [createdBy], references: [id])
+  beneficiaries Beneficiary[]
+}
+
+model Beneficiary {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  phone     String
+  address   String
+  amount    Float
+  status    BeneficiaryStatus @default(ACTIVE)
+  schemeId  String   @db.ObjectId
+  gpId      String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scheme        Scheme        @relation(fields: [schemeId], references: [id])
+  gramPanchayat GramPanchayat @relation(fields: [gpId], references: [id])
+}
+
+model WaterReport {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  ward          String
+  supplyStatus  WaterSupplyStatus
+  qualityStatus WaterQualityStatus
+  phLevel       Float?
+  tdsLevel      Float?
+  chlorineLevel Float?
+  issues        String[]
+  remarks       String?
+  gpId          String      @db.ObjectId
+  createdBy     String      @db.ObjectId
+  updatedBy     String?     @db.ObjectId
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  gramPanchayat GramPanchayat @relation(fields: [gpId], references: [id])
+  user          User          @relation(fields: [createdBy], references: [id])
+}
+
+model Asset {
+  id                  String      @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  type                AssetType
+  location            String
+  condition           AssetCondition
+  length              Float?
+  width               Float?
+  area                Float?
+  constructionDate    DateTime?
+  lastMaintenanceDate DateTime?
+  nextMaintenanceDate DateTime?
+  estimatedCost       Float?
+  remarks             String?
+  gpId                String      @db.ObjectId
+  createdBy           String      @db.ObjectId
+  updatedBy           String?     @db.ObjectId
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  gramPanchayat GramPanchayat @relation(fields: [gpId], references: [id])
+  user          User          @relation(fields: [createdBy], references: [id])
+}
+
+model Document {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  fileUrl     String
+  fileType    String
+  fileSize    Int
+  gpId        String   @db.ObjectId
+  createdBy   String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  gramPanchayat GramPanchayat @relation(fields: [gpId], references: [id])
+  user          User          @relation(fields: [createdBy], references: [id])
+}
+
+model WarishApplication {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  reportingDate         DateTime
+  acknowlegment         String   @unique
+  applicantName         String
+  applicantMobileNumber String
+  relationwithdeceased  String
+  nameOfDeceased        String
+  dateOfDeath           DateTime
+
+  gender                  Gender
+  maritialStatus          MaritialStatus
+  fatherName              String
+  spouseName              String?
+  villageName             String
+  postOffice              String
+  warishDetails           WarishDetail[]
+  assingstaffId           String?                 @db.ObjectId
+  fieldreportRemark       String?
+  adminNoteRemark         String?
+  warishRefNo             String?
+  warishRefDate           DateTime?
+  approvalYear            String?
+  renewdate               DateTime?
+  warishApplicationStatus WarishApplicationStatus @default(submitted)
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+  User                    User?                   @relation(fields: [userId], references: [id])
+  userId                  String?                 @db.ObjectId
+  warishdocumentverified  Boolean                 @default(false)
+  WarishDocument          WarishDocument[]
+  
+  // GP-specific fields
+  gpId                    String                  @db.ObjectId
+  createdBy               String                  @db.ObjectId
+  updatedBy               String?                 @db.ObjectId
+  gramPanchayat           GramPanchayat          @relation(fields: [gpId], references: [id])
+  createdByUser            User                    @relation("WarishCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser            User?                   @relation("WarishUpdatedBy", fields: [updatedBy], references: [id])
+
+  @@index([applicantName, nameOfDeceased])
+  @@index([gpId])
+}
+
+model WarishDetail {
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  gender              Gender
+  relation            FamilyRelationship
+  livingStatus        LivingStatus
+  maritialStatus      MaritialStatus
+  hasbandName         String?
+  children            WarishDetail[]     @relation("ParentChild")
+  parent              WarishDetail?      @relation("ParentChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId            String?            @db.ObjectId
+  warishApplication   WarishApplication  @relation(fields: [warishApplicationId], references: [id], onDelete: Cascade)
+  warishApplicationId String             @db.ObjectId
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@index([name, warishApplicationId])
+}
+
+model WarishDocument {
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  title               String
+  description         String?
+  fileUrl             String
+  fileType            String
+  fileSize            Int
+  warishApplication   WarishApplication  @relation(fields: [warishApplicationId], references: [id], onDelete: Cascade)
+  warishApplicationId String             @db.ObjectId
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+}
+
+model Payment {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  gpId      String        @db.ObjectId
+  amount    Float
+  currency  String        @default("INR")
+  stripeId  String        @unique
+  status    PaymentStatus
+  createdAt DateTime      @default(now())
+}
+
+// Enums
+enum UserRole {
+  SUPER_ADMIN
+  GP_ADMIN
+  GP_STAFF
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum GramPanchayatStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  UNPAID
+}
+
+enum Feature {
+  CERTIFICATE_MGMT
+  SCHEME_TRACKING
+  WATER_MGMT
+  ASSET_MGMT
+  DOCUMENT_UPLOAD
+  MULTI_STAFF
+  REPORT_ANALYTICS
+  API_ACCESS
+  WHITE_LABEL
+}
+
+enum CertificateType {
+  BIRTH
+  DEATH
+  MARRIAGE
+  RESIDENCE
+  WARISH
+}
+
+enum CertificateStatus {
+  PENDING
+  ASSIGNED
+  UNDER_REVIEW
+  VERIFIED
+  APPROVED
+  REJECTED
+  ISSUED
+  EXPIRED
+  CANCELLED
+}
+
+enum SchemeType {
+  AGRICULTURE
+  HEALTH
+  EDUCATION
+  HOUSING
+  EMPLOYMENT
+  OTHER
+}
+
+enum SchemeStatus {
+  ACTIVE
+  INACTIVE
+  COMPLETED
+}
+
+enum BeneficiaryStatus {
+  ACTIVE
+  INACTIVE
+  COMPLETED
+}
+
+enum WaterSupplyStatus {
+  NORMAL
+  LOW_PRESSURE
+  NO_SUPPLY
+  MAINTENANCE
+}
+
+enum WaterQualityStatus {
+  SAFE
+  UNSAFE
+  TESTING
+}
+
+enum AssetType {
+  ROAD
+  DRAINAGE
+  BUILDING
+  PUMP
+  TANK
+  OTHER
+}
+
+enum AssetCondition {
+  GOOD
+  FAIR
+  POOR
+  CRITICAL
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+enum MaritialStatus {
+  married
+  unmarried
+  divorced
+  widowed
+}
+
+enum LivingStatus {
+  alive
+  dead
+}
+
+enum WarishApplicationStatus {
+  submitted
+  pending
+  process
+  approved
+  rejected
+  cancelled
+  renewed
+}
+
+enum FamilyRelationship {
+  Son
+  Daughter
+  Father
+  Mother
+  Brother
+  Wife
+  Husband
+  Sister
+  Grandfather
+  Grandmother
+  Grandson
+  Granddaughter
+  Uncle
+  Aunt
+  Nephew
+  Niece
+  Cousin
+  Stepfather
+  Stepmother
+  Stepson
+  Stepdaughter
+  Stepbrother
+  Stepsister
+  HalfBrother
+  HalfSister
+  FatherInLaw
+  MotherInLaw
+  SonInLaw
+  DaughterInLaw
+  GranddaughterInLaw
+  BrotherInLaw
+  SisterInLaw
+  Greatgrandson
+  Greatgranddaughter
+  GreatgranddaughterInLaw
+  GreatNephew
+  GreatNiece
+}
+
+enum CertificateFormat {
+  DIGITAL
+  PHYSICAL
+  BOTH
+}
+
+enum CertificatePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum CertificateDocumentType {
+  IDENTITY_PROOF
+  ADDRESS_PROOF
+  BIRTH_PROOF
+  DEATH_PROOF
+  MARRIAGE_PROOF
+  INCOME_PROOF
+  CASTE_PROOF
+  DISABILITY_PROOF
+  MEDICAL_CERTIFICATE
+  POLICE_VERIFICATION
+  OTHER
+}
