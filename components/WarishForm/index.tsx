@@ -1,9 +1,8 @@
 "use client";
-import { useState, useRef, useTransition } from "react";
+import { useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
+
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 //import { createNestedWarishDetails } from "@/action/warishApplicationAction";
@@ -14,29 +13,23 @@ import {
 import { ApplicationInfo } from "./application-info";
 import { WarishTable } from "./warish-table";
 import { defaultValues } from "./constants";
-import {
-  CheckCircle2,
-  ClipboardList,
-  Users,
-  SendHorizonal,
-} from "lucide-react";
+import { ClipboardList, Users, SendHorizonal } from "lucide-react";
 
 export default function WarishFormComponent() {
-  const [acnumber, setAcnumber] = useState<string>("");
-  const { toast } = useToast();
   const formreset = useRef(null);
-  const router = useRouter();
+
   const [isPending, startTransition] = useTransition();
   const form = useForm<WarishFormValuesType>({
     resolver: zodResolver(warishFormSchema),
     defaultValues,
   });
 
-  const resetForm = () => form.reset(defaultValues);
+  // const resetForm = () => form.reset(defaultValues);
 
   async function onSubmit(data: WarishFormValuesType) {
+    console.log(data);
 
-    console.log(data)
+    startTransition(() => {});
     // startTransition(async () => {
     //   try {
     //     const result = await createNestedWarishDetails(data);
@@ -79,16 +72,6 @@ export default function WarishFormComponent() {
           className="space-y-6 md:space-y-8"
           ref={formreset}
         >
-          {acnumber && (
-            <div className="bg-emerald-50/80 p-3 md:p-4 rounded-xl border border-emerald-200 flex items-center gap-2 md:gap-3">
-              <CheckCircle2 className="h-5 w-5 md:h-6 md:w-6 text-emerald-600" />
-              <p className="text-xs md:text-sm font-medium text-emerald-700">
-                Acknowledgment Number / স্বীকৃতি নম্বর:{" "}
-                <span className="font-semibold break-all">{acnumber}</span>
-              </p>
-            </div>
-          )}
-
           {/* Part 1: Application Information */}
           <div className="bg-gradient-to-br from-primary/95 to-primary/80 text-primary-foreground px-4 py-3 md:px-6 md:py-4 rounded-xl shadow-lg">
             <div className="flex items-center gap-2 md:gap-3">

@@ -25,6 +25,7 @@ import {
   MdAssignmentTurnedIn,
 } from "react-icons/md";
 import { FaChevronCircleRight, FaChartBar } from "react-icons/fa";
+import { UserRole, Feature } from "@prisma/client";
 
 // Type Definition
 export type MenuItemProps = {
@@ -34,6 +35,8 @@ export type MenuItemProps = {
   color?: string;
   submenu: boolean;
   subMenuItems: MenuItemProps[];
+  roles?: UserRole[]; // Allowed roles for this menu item
+  features?: Feature[]; // Required features for this menu item
 };
 
 // Color Constants
@@ -69,6 +72,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
     color: COLORS.blue,
     submenu: false,
     subMenuItems: [],
+    roles: [], // Public access
+    features: [],
   },
   {
     menuItemText: "Certificate Applications",
@@ -83,6 +88,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.yellow,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "View Application Status",
@@ -91,8 +98,12 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [Feature.CERTIFICATE_MGMT],
       },
     ],
+    roles: [], // Public access
+    features: [Feature.CERTIFICATE_MGMT],
   },
   {
     menuItemText: "Profile Management",
@@ -107,6 +118,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.indigo,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
       {
         menuItemText: "Edit Profile",
@@ -115,6 +128,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.pink,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
       {
         menuItemText: "Change Password",
@@ -123,8 +138,12 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.red,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
     ],
+    roles: [], // Public access
+    features: [],
   },
   {
     menuItemText: "Payments",
@@ -139,6 +158,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.lime,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
       {
         menuItemText: "Payment Methods",
@@ -147,8 +168,12 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
     ],
+    roles: [], // Public access
+    features: [],
   },
   {
     menuItemText: "Announcements",
@@ -157,6 +182,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
     color: COLORS.red,
     submenu: false,
     subMenuItems: [],
+    roles: [], // Public access
+    features: [],
   },
   {
     menuItemText: "Feedback & Complaints",
@@ -171,6 +198,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.orange,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
       {
         menuItemText: "File Complaint",
@@ -179,8 +208,12 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.red,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
     ],
+    roles: [], // Public access
+    features: [],
   },
   {
     menuItemText: "Resources Center",
@@ -195,6 +228,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.teal,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [Feature.DOCUMENT_UPLOAD],
       },
       {
         menuItemText: "FAQs",
@@ -203,6 +238,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.cyan,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
       {
         menuItemText: "User Guides",
@@ -211,8 +248,12 @@ export const publicUserMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [], // Public access
+        features: [],
       },
     ],
+    roles: [], // Public access
+    features: [],
   },
   {
     menuItemText: "Notifications",
@@ -221,6 +262,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
     color: COLORS.pink,
     submenu: false,
     subMenuItems: [],
+    roles: [], // Public access
+    features: [],
   },
   {
     menuItemText: "Calendar",
@@ -229,6 +272,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
     color: COLORS.red,
     submenu: false,
     subMenuItems: [],
+    roles: [], // Public access
+    features: [],
   },
   {
     menuItemText: "Support Center",
@@ -237,6 +282,8 @@ export const publicUserMenuItems: MenuItemProps[] = [
     color: COLORS.teal,
     submenu: false,
     subMenuItems: [],
+    roles: [], // Public access
+    features: [],
   },
 ];
 
@@ -249,6 +296,8 @@ export const adminMenuItems: MenuItemProps[] = [
     color: COLORS.blue,
     submenu: false,
     subMenuItems: [],
+    roles: [UserRole.GP_ADMIN],
+    features: [],
   },
   {
     menuItemText: "Communication",
@@ -263,6 +312,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.indigo,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [],
       },
       {
         menuItemText: "Email History",
@@ -271,8 +322,12 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.red,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [],
       },
     ],
+    roles: [UserRole.GP_ADMIN],
+    features: [],
   },
   {
     menuItemText: "Operations Management",
@@ -287,6 +342,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.SCHEME_TRACKING],
       },
       {
         menuItemText: "Work Status Tracking",
@@ -295,6 +352,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.indigo,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.SCHEME_TRACKING],
       },
       {
         menuItemText: "Fund Status",
@@ -303,6 +362,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.red,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.SCHEME_TRACKING],
       },
       {
         menuItemText: "Work Details",
@@ -311,8 +372,12 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.red,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.SCHEME_TRACKING],
       },
     ],
+    roles: [UserRole.GP_ADMIN],
+    features: [Feature.SCHEME_TRACKING],
   },
   {
     menuItemText: "Vendor Management",
@@ -327,6 +392,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.indigo,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [],
       },
       {
         menuItemText: "Update Vendor Details",
@@ -335,6 +402,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.red,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [],
       },
       {
         menuItemText: "Vendor Directory",
@@ -343,6 +412,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.red,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [],
       },
       {
         menuItemText: "Vendor Analytics",
@@ -357,6 +428,8 @@ export const adminMenuItems: MenuItemProps[] = [
             color: COLORS.blue,
             submenu: false,
             subMenuItems: [],
+            roles: [UserRole.GP_ADMIN],
+            features: [Feature.REPORT_ANALYTICS],
           },
           {
             menuItemText: "Earnest Money Status",
@@ -365,6 +438,8 @@ export const adminMenuItems: MenuItemProps[] = [
             color: COLORS.green,
             submenu: false,
             subMenuItems: [],
+            roles: [UserRole.GP_ADMIN],
+            features: [Feature.REPORT_ANALYTICS],
           },
           {
             menuItemText: "Technical Compliance",
@@ -373,10 +448,16 @@ export const adminMenuItems: MenuItemProps[] = [
             color: COLORS.purple,
             submenu: false,
             subMenuItems: [],
+            roles: [UserRole.GP_ADMIN],
+            features: [Feature.REPORT_ANALYTICS],
           },
         ],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.REPORT_ANALYTICS],
       },
     ],
+    roles: [UserRole.GP_ADMIN],
+    features: [],
   },
   {
     menuItemText: "Certificate Administration",
@@ -391,6 +472,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.yellow,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "Assignment Management",
@@ -405,6 +488,8 @@ export const adminMenuItems: MenuItemProps[] = [
             color: COLORS.blue,
             submenu: false,
             subMenuItems: [],
+            roles: [UserRole.GP_ADMIN],
+            features: [Feature.MULTI_STAFF],
           },
           {
             menuItemText: "Public Applications",
@@ -413,8 +498,12 @@ export const adminMenuItems: MenuItemProps[] = [
             color: COLORS.blue,
             submenu: false,
             subMenuItems: [],
+            roles: [UserRole.GP_ADMIN],
+            features: [Feature.MULTI_STAFF],
           },
         ],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.MULTI_STAFF],
       },
       {
         menuItemText: "Approval Process",
@@ -423,6 +512,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "Certificate Generation",
@@ -431,6 +522,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.green,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "Renewal Process",
@@ -439,6 +532,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "Application Status",
@@ -447,6 +542,8 @@ export const adminMenuItems: MenuItemProps[] = [
         color: COLORS.purple,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "Application Management",
@@ -461,6 +558,8 @@ export const adminMenuItems: MenuItemProps[] = [
             color: COLORS.teal,
             submenu: false,
             subMenuItems: [],
+            roles: [UserRole.GP_ADMIN],
+            features: [Feature.CERTIFICATE_MGMT],
           },
           {
             menuItemText: "Document Upload",
@@ -469,6 +568,8 @@ export const adminMenuItems: MenuItemProps[] = [
             color: COLORS.teal,
             submenu: false,
             subMenuItems: [],
+            roles: [UserRole.GP_ADMIN],
+            features: [Feature.DOCUMENT_UPLOAD],
           },
           {
             menuItemText: "View Applications",
@@ -477,10 +578,16 @@ export const adminMenuItems: MenuItemProps[] = [
             color: COLORS.teal,
             submenu: false,
             subMenuItems: [],
+            roles: [UserRole.GP_ADMIN],
+            features: [Feature.CERTIFICATE_MGMT],
           },
         ],
+        roles: [UserRole.GP_ADMIN],
+        features: [Feature.CERTIFICATE_MGMT],
       },
     ],
+    roles: [UserRole.GP_ADMIN],
+    features: [Feature.CERTIFICATE_MGMT],
   },
   {
     menuItemText: "Procurement Management",
@@ -1005,6 +1112,8 @@ export const employeeMenuItems: MenuItemProps[] = [
     color: COLORS.blue,
     submenu: false,
     subMenuItems: [],
+    roles: [UserRole.GP_STAFF],
+    features: [],
   },
   {
     menuItemText: "Certificate Processing",
@@ -1019,6 +1128,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.yellow,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "New Application",
@@ -1027,6 +1138,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.yellow,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "Process Applications",
@@ -1035,6 +1148,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.green,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.CERTIFICATE_MGMT],
       },
       {
         menuItemText: "Generate Certificates",
@@ -1043,8 +1158,12 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.purple,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.CERTIFICATE_MGMT],
       },
     ],
+    roles: [UserRole.GP_STAFF],
+    features: [Feature.CERTIFICATE_MGMT],
   },
   {
     menuItemText: "Work Reporting",
@@ -1059,6 +1178,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.REPORT_ANALYTICS],
       },
       {
         menuItemText: "Performance Metrics",
@@ -1067,8 +1188,12 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.green,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.REPORT_ANALYTICS],
       },
     ],
+    roles: [UserRole.GP_STAFF],
+    features: [Feature.REPORT_ANALYTICS],
   },
   {
     menuItemText: "Leave Management",
@@ -1083,6 +1208,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [],
       },
       {
         menuItemText: "Leave Balance",
@@ -1091,6 +1218,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.green,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [],
       },
       {
         menuItemText: "Leave History",
@@ -1099,8 +1228,12 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.purple,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [],
       },
     ],
+    roles: [UserRole.GP_STAFF],
+    features: [],
   },
   {
     menuItemText: "Document Management",
@@ -1115,6 +1248,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.DOCUMENT_UPLOAD],
       },
       {
         menuItemText: "My Documents",
@@ -1123,6 +1258,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.green,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.DOCUMENT_UPLOAD],
       },
       {
         menuItemText: "Shared Documents",
@@ -1131,8 +1268,12 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.purple,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.DOCUMENT_UPLOAD],
       },
     ],
+    roles: [UserRole.GP_STAFF],
+    features: [Feature.DOCUMENT_UPLOAD],
   },
   {
     menuItemText: "Tasks",
@@ -1147,6 +1288,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.SCHEME_TRACKING],
       },
       {
         menuItemText: "Team Tasks",
@@ -1155,8 +1298,12 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.green,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.SCHEME_TRACKING],
       },
     ],
+    roles: [UserRole.GP_STAFF],
+    features: [Feature.SCHEME_TRACKING],
   },
   {
     menuItemText: "Training",
@@ -1171,6 +1318,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.blue,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [],
       },
       {
         menuItemText: "Certifications",
@@ -1179,18 +1328,19 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.green,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [],
       },
     ],
+    roles: [UserRole.GP_STAFF],
+    features: [],
   },
-  //water tanker management
   {
     menuItemText: "Water Tanker Management",
     Icon: MdDashboard,
     color: COLORS.blue,
     submenu: true,
-
     subMenuItems: [
-      
       {
         menuItemText: "Booking Requests",
         menuItemLink: `${BASE_URLS.employee}/water-tanker/booking`,
@@ -1198,6 +1348,8 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.yellow,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.WATER_MGMT],
       },
       {
         menuItemText: "Service History",
@@ -1206,9 +1358,13 @@ export const employeeMenuItems: MenuItemProps[] = [
         color: COLORS.red,
         submenu: false,
         subMenuItems: [],
+        roles: [UserRole.GP_STAFF],
+        features: [Feature.WATER_MGMT],
       },
     ],
-  } 
+    roles: [UserRole.GP_STAFF],
+    features: [Feature.WATER_MGMT],
+  },
 ];
 
 // Super Admin Menu
@@ -1252,6 +1408,8 @@ export const superAdminMenuItems: MenuItemProps[] = [
         subMenuItems: [],
       },
     ],
+    roles: [UserRole.SUPER_ADMIN],
+    features: [],
   },
   {
     menuItemText: "Infrastructure",

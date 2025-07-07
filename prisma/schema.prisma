@@ -443,6 +443,28 @@ model Payment {
   createdAt DateTime      @default(now())
 }
 
+model Permission {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  // You can link permissions to features or menu items if needed
+}
+
+model Menu {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  label       String
+  link        String?
+  icon        String?
+  color       String?
+  parentId    String?  @db.ObjectId
+  order       Int?
+  feature     Feature?
+  permission  String?  // Permission name, if required
+  roles       UserRole[]
+  children    Menu[]   @relation("MenuChildren", fields: [id], references: [parentId])
+  parent      Menu?    @relation("MenuChildren", fields: [parentId], references: [id])
+}
+
 // Enums
 enum UserRole {
   SUPER_ADMIN
